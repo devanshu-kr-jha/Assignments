@@ -1,0 +1,4 @@
+Python is fun
+Radar is a palindrome
+The quick brown fox jumps over the lazy dog
+A man a plan a canal Panama
