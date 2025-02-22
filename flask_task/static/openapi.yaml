@@ -1,0 +1,390 @@
+openapi: 3.0.0
+info:
+  title: User Management API
+  description: |-
+    API for managing users with CRUD operations, pagination, and statistics.
+    
+    Links:
+      - [Github repository](https://github.com/swagger-api/swagger-petstore)
+  
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Local development server
+
+paths:
+  /users:
+    get:
+      summary: Get a list of users
+      description: Retrieves a paginated list of users, supports sorting and filtering.
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            default: 1
+          required: false
+        - name: limit
+          in: query
+          description: Number of users per page
+          schema:
+            type: integer
+            default: 5
+          required: false
+        - name: sort
+          in: query
+          description: Sort users by field (prefix with '-' for descending order)
+          schema:
+            type: string
+            enum: [id, first_name, last_name, age, -id, -first_name, -last_name, -age]
+          required: false
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  per_page:
+                    type: integer
+        '400':
+          description: Invalid request parameters
+        '500':
+          description: Internal server error
+    post:
+      summary: Create a new user
+      description: Adds a new user to the database.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        first_name:
+                          type: string
+                          example: "Amit"
+                          nullable: false
+                        last_name:
+                          type: string
+                          example: "Sharma"
+                        company_name:
+                          type: string
+                          example: "Hewlett Packard Enterprise"
+                        city:
+                          type: string
+                          example: "Bengaluru"
+                        state:
+                          type: string
+                          example: "Karnataka"
+                        zip:
+                          type: integer
+                          example: 560048
+                        email:
+                          type: string
+                          format: email
+                          example: "sharma-amit@hpe.com"
+                        web:
+                          type: string
+                          format: uri
+                          example: "https://wd5.myworkday.com/hpe"
+                        age:
+                          type: integer
+                          example: 32
+          
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+
+  /users/{id}:
+    get:
+      summary: Get user by ID
+      description: Retrieves a specific user by their ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "User not found"
+        '500':
+          description: Internal server error
+    put:
+      summary: Update a user
+      description: Updates user details by ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - type: object
+                      properties:
+                        error:
+                          type: string
+                          example: "Missing required fields: | Unexpected fields: "
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "User not found"
+        '500':
+          description: Internal server error
+    patch:
+      summary: Partially update user
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - type: object
+                      properties:
+                        error:
+                          type: string
+                          example: "Unexpected fields: "
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "User not found"
+        500:
+          description: Internal server error
+    delete:
+      summary: Delete a user
+      description: Removes a user by ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User deleted successfully
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "User not found"
+        '500':
+          description: Internal server error
+
+  /users/summary:
+    get:
+      summary: Get user statistics
+      description: Provides the total count and average age of users.
+      responses:
+        '200':
+          description: Statistics data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    data:
+                      type: object
+                      properties:
+                        avg_age:
+                          type: number
+                          example: 56.01
+                        count_by_city:
+                          type: object
+                          additionalProperties:
+                            type: integer
+                          example:
+                            Aberdeen: 1
+                            Abilene: 4
+                            Absecon: 1
+                            Akron: 1
+                        max_age:
+                          type: integer
+                          example: 99
+                        min_age:
+                          type: integer
+                          example: 10
+                  
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+          nullable: false
+        last_name:
+          type: string
+        company_name:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: integer
+        email:
+          type: string
+          format: email
+        web:
+          type: string
+          format: uri
+        age:
+          type: integer
+
+    UserInput:
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: "Amit"
+          nullable: false
+        last_name:
+          type: string
+          example: "Sharma"
+        company_name:
+          type: string
+          example: "Hewlett Packard Enterprise"
+        city:
+          type: string
+          example: "Bengaluru"
+        state:
+          type: string
+          example: "Karnataka"
+        zip:
+          type: integer
+          example: 560048
+        email:
+          type: string
+          format: email
+          example: "sharma-amit@hpe.com"
+        web:
+          type: string
+          format: uri
+          example: "https://wd5.myworkday.com/hpe"
+        age:
+          type: integer
+          example: 32
