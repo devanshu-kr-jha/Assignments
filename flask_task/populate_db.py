@@ -1,7 +1,9 @@
 import json
 from db_util import db
 from models import User
+import logging
 
+logger = logging.getLogger(__name__)
 
 path_to_file = "users.json"
 
@@ -27,7 +29,7 @@ def populate_db(path_to_file):
                 db.session.add(new_user)
                 db.session.commit()
 
-            print("All records from users.json added successfully to db")
+            logging.info("All records from users.json added successfully to db")
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")

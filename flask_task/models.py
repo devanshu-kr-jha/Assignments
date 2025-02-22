@@ -16,17 +16,6 @@ class User(db.Model):
     web: Mapped[str]
     age: Mapped[int]
 
-    # def __init__(self, first_name, last_name, company_name, city, state, zip, email, web, age):
-    #     self.first_name = first_name
-    #     self.last_name = last_name
-    #     self.company_name = company_name
-    #     self.city = city
-    #     self.state = state
-    #     self.zip = zip
-    #     self.email = email
-    #     self.web = web
-    #     self.age = age
-
 
 #  {
 #         "id": 1,
