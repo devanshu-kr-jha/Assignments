@@ -32,12 +32,24 @@ paths:
             type: integer
             default: 5
           required: false
+        - name: search
+          in: query
+          description: Case-insensitive search on First Name or Last Name
+          schema:
+            type: string
+          required: false
         - name: sort
           in: query
           description: Sort users by field (prefix with '-' for descending order)
           schema:
             type: string
             enum: [id, first_name, last_name, age, -id, -first_name, -last_name, -age]
+          required: false
+        - name: city
+          in: query
+          description: Filter by city names
+          schema:
+            type: string
           required: false
       responses:
         '200':
@@ -58,9 +70,29 @@ paths:
                   per_page:
                     type: integer
         '400':
-          description: Invalid request parameters
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - type: object
+                      properties:
+                        error:
+                          type: string
+                          example: "Invalid query parameters: "
         '500':
-          description: Internal server error
+          description: Internal server error'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to fetch users: "
+
     post:
       summary: Create a new user
       description: Adds a new user to the database.
@@ -113,11 +145,29 @@ paths:
                         age:
                           type: integer
                           example: 32
-          
-        400:
+        '400':
           description: Bad request
-        500:
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - type: object
+                      properties:
+                        error:
+                          type: string
+                          example: "Missing required fields: "
+        '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to create new user: "
 
   /users/{id}:
     get:
@@ -153,6 +203,15 @@ paths:
                     example: "User not found"
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to get user: "
+
     put:
       summary: Update a user
       description: Updates user details by ID.
@@ -205,6 +264,15 @@ paths:
                     example: "User not found"
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to update user: "
+
     patch:
       summary: Partially update user
       parameters:
@@ -254,8 +322,17 @@ paths:
                   error:
                     type: string
                     example: "User not found"
-        500:
+        '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to update user: "
+
     delete:
       summary: Delete a user
       description: Removes a user by ID.
@@ -288,6 +365,15 @@ paths:
                     example: "User not found"
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to delete user: "
+
 
   /users/summary:
     get:
@@ -325,6 +411,15 @@ paths:
                   
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to get summary: "
+          
 
 components:
   schemas:
