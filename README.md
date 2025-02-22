@@ -145,18 +145,10 @@ GET /api/v1/users/summary
   }
 }
 ```
+---
 
 ## **Run with Docker**  
-```sh
-docker-compose up --build -d
-```
 This will start both the **Flask API** and **PostgreSQL database**.
-
----
-
----
-
-## **Run Locally**  
 
 ### **1️⃣ Clone the Repository**  
 ```sh
@@ -165,26 +157,10 @@ git clone https://github.com/devanshu-kr-jha/Assignments
 cd Assignments/flask_task
 ```
 
-### **2️⃣ Create a Virtual Environment**  
+### **2️⃣ Run docker-compose.yml**  
 ```sh
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+docker-compose up --build -d
 ```
-
-### **3️⃣ Install Dependencies**  
-```sh
-pip install -r requirements.txt
-```
-### **4️⃣ Run the Application**  
-```sh
-export FLASK_APP=app.py
-
-flask run
-```
-API will be available at **`http://localhost:5000/api/v1/users`**.
-
----
-
 ## **API Documentation (Swagger UI)**  
 Once running, access **Swagger UI** at:  
 **`http://localhost:5000/api/docs`**
