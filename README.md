@@ -152,8 +152,7 @@ This will start both the **Flask API** and **PostgreSQL database**.
 
 ### **1️⃣ Clone the Repository**  
 ```sh
-git clone https://github.com/devanshu-kr-jha/Assignments
-
+git clone https://github.com/devanshu-kr-jha/Assignments &&
 cd Assignments/flask_task
 ```
 
