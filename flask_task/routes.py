@@ -20,14 +20,20 @@ def test_handler():
 @api_routes.route("/users", methods=["GET"])
 @limiter.limit("100/hour;5/minute")
 def get_users():
+    invalid_params = validate_query_params(request.args.keys())
+    if invalid_params:
+        return (
+            jsonify(
+                {"error": f"Invalid query parameters: {', '.join(invalid_params)}"}
+            ),
+            400,
+        )
+
     page = request.args.get("page", default=1, type=int)
     limit = request.args.get("limit", default=5, type=int)
     search = request.args.get("search", default="", type=str).strip()
     sort = request.args.get("sort", default="id", type=str)
-
-    logger.info(
-        f"Fetching users: page={page}, limit={limit}, search='{search}', sort='{sort}'"
-    )
+    city = request.args.get("city", default="", type=str).strip()
 
     try:
         query = db.session.query(User)
@@ -37,6 +43,12 @@ def get_users():
                 or_(
                     User.first_name.ilike(f"%{search}%"),
                     User.last_name.ilike(f"%{search}%"),
+                )
+            )
+        if city:
+            query = query.filter(
+                or_(
+                    User.city.ilike(f"%{city}%"),
                 )
             )
 
@@ -66,7 +78,6 @@ def get_users():
                     "age": user.age,
                 }
             )
-        logger.info("User fetched successfully")
         return (
             jsonify(
                 {
@@ -93,7 +104,6 @@ def get_user_by_id(id):
             logger.error(f"Failed to fetch user with id: {id}")
             return jsonify({"error": "User not found"}), 404
 
-        logger.info("User fetched successfully")
         return (
             jsonify(
                 {
@@ -325,6 +335,13 @@ def get_statistics():
 
 
 # utils
+def validate_query_params(params):
+    allowed_params = {"page", "limit", "sort", "search", "city"}
+    unexpected_params = set(params) - allowed_params
+
+    return unexpected_params if unexpected_params else None
+
+
 def validate_payload(data):
     required_fields = {
         "first_name",
