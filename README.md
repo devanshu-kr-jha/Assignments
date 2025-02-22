@@ -20,6 +20,8 @@ GET /api/v1/users
 | `limit`   | `int`    | Number of items per page (default: 5) |
 | `search`  | `string` | Case-insensitive search on First Name or Last Name |
 | `sort`    | `string` | Field to sort in ascending order; prefix with `-` (e.g., `-age`) for descending |
+| `city`  | `string` | Filter users by city|
+
 
 #### **Example Request**
 ```http
