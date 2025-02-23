@@ -1,14 +1,11 @@
 from rest_framework import viewsets, status
 from api.serializers import UserSerializer
 from api.models import User
-from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
 
 class UserViewSet(viewsets.ViewSet):
-    parser_classes = [JSONParser]
-
     def list(self, request):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
