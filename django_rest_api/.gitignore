@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+
+venv/
+.venv/
+
+# Django migrations
+**/migrations/**  # Ignore migration files except for __init__.py
+!**/migrations/__init__.py
+
+
+.env
+*.env
+
+db.sqlite3
+*.sqlite3
+
+logs/
+*.log
+*.out
+*.err
+
+
+.vscode/
+.idea/
+
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.cache
+
+
+.DS_Store
