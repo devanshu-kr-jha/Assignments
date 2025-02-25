@@ -1,15 +1,33 @@
 from rest_framework import viewsets, status
 from api.serializers import UserSerializer
 from api.models import User
+from api.pagination import CustomPagination
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from api.filters import UserFilter
 
 
 class UserViewSet(viewsets.ViewSet):
     def list(self, request):
         users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
+
+        # applying filters
+        filterset = UserFilter(request.GET, queryset=users)
+        if filterset.is_valid():
+            users = filterset.qs
+
+        # paginating results
+        paginator = CustomPagination()
+        paginated_users = paginator.paginate_queryset(users, request)
+
+        # sorting results
+        sort_field = request.GET.get("sort", None)
+        if sort_field:
+            print(sort_field)
+            users = users.order_by(sort_field)
+
+        serializer = UserSerializer(paginated_users, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     def retrieve(self, request, pk=None):
         user = get_object_or_404(User, pk=pk)
